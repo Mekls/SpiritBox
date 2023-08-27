@@ -1,15 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
-const spiritEmbed = new EmbedBuilder()
-    .setColor(0xffffff)
-    .setTitle('Spirit')
-    .setDescription('A Spirit can be temporarily stopped by burning Incense near them.')
-    .addFields(
-        { name: 'EMF', value: '\u200B', inline: true },
-		{ name: 'Spirit Box', value: '\u200B', inline: true },
-		{ name: 'Ghost Writing', value: '\u200B', inline: true },
-    )
-
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('ghost')
@@ -45,15 +35,37 @@ module.exports = {
                     { name: 'Yurei', value: 'yurei' }
                 )),
 	async execute(interaction) {
-		//await interaction.reply('Pong!');
-        //console.log(interaction.options.get('name').value);
-        switch(interaction.options.get('name').value) {
-            case 'spirit':
-              await interaction.reply({embeds: [spiritEmbed]});
-              break;
-            case y:
-              // code block
-              break;
-          }
+
+        const ghosts = {
+            spirit: {
+                name: "Spirit",
+                tells: ["Smudging the ghost will prevent a hunt for 180s instead of the normal 90s"],
+                speed: "1.7m/s",
+                sanity: "50%",
+                evidence: ["EMF 5", "Spirit Box", "Ghost Writing"],
+            },
+            wraith: {
+                name: "Wraith",
+                tells: ["Won't step in salt", "Won't be slowed by tier 3 salt", "Can teleport to a random player, leaving EMF 2 or EMF 5"],
+                speed: "1.7m/s",
+                sanity: "50%",
+                evidence: ["EMF 5", "Spirit Box", "DOTS"],
+            },
+            // Add more ghosts here...
+        };
+
+        const selectedGhost = interaction.options.getString('name');
+
+        const ghostEmbed = new EmbedBuilder()
+            .setColor(0xffffff)
+            .setTitle(ghosts[selectedGhost].name)
+            .setDescription(ghosts[selectedGhost].tells.join('\n') + "\n***Speed: " + ghosts[selectedGhost].speed + "***\n" + "***Sanity: " + ghosts[selectedGhost].sanity + "***")
+            .addFields(
+                { name: ghosts[selectedGhost].evidence[0], value: '\u200B', inline: true },
+		        { name: ghosts[selectedGhost].evidence[1], value: '\u200B', inline: true },
+		        { name: ghosts[selectedGhost].evidence[2], value: '\u200B', inline: true },
+            )
+
+        await interaction.reply({embeds: [ghostEmbed], ephemeral: true});
 	},
 };
